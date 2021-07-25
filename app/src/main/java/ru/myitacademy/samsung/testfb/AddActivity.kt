@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -16,12 +18,15 @@ class AddActivity : AppCompatActivity() {
     lateinit var telnoET: EditText
     lateinit var db: DatabaseReference
     lateinit var user: FirebaseUser
-             var key = 0
+    var k=0
+    var u_id = "non"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add)
         nameET = findViewById(R.id.name)
         telnoET = findViewById(R.id.telno)
+        if(intent.getStringExtra("keyUser")!=null)
+            u_id = intent.getStringExtra("keyUser")!!
     }
 
     fun add(view: View){
@@ -29,20 +34,24 @@ class AddActivity : AppCompatActivity() {
         db = Firebase.database.getReference(user.uid)
       val nameF = nameET.text.toString()
       val telnoF = telnoET.text.toString()
-      val friend = Friend(key++,nameF,telnoF)
-      db.push().setValue(friend)
+      val friend = Friend(nameF,telnoF)
+    db.child((findViewById<EditText>(R.id.nick)).text.toString()).setValue(friend)
+        Toast.makeText(this,"Добавлено",Toast.LENGTH_SHORT).show()
       finish()
     }
 }
 
 class Friend{
-    var id = 0
     var name = ""
     var telno = ""
-    constructor(id: Int, name: String, telno: String) {
-        this.id = id
+    constructor(name: String, telno: String) {
         this.name = name
         this.telno = telno
     }
+
+    override fun toString(): String {
+        return "name='$name', telno='$telno'"
+    }
+
 
 }
